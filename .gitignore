@@ -1,0 +1,5 @@
+.env
+db/mysql_data
+.idea
+es/data
+es/logs
