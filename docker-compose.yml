@@ -75,7 +75,7 @@ services:
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.21.0.2/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.23.0.2/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
       - LIFERAY_DISABLE_TRIAL_LICENSE=true
       - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
       - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
@@ -112,7 +112,7 @@ services:
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
       - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.21.0.2/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
+      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.23.0.2/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
       - LIFERAY_DISABLE_TRIAL_LICENSE=true
       - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
       - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
