@@ -15,6 +15,7 @@ services:
       - ./es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./es/config/logging.yml:/usr/share/elasticsearch/config/logging.yml
       - ./es/logs/:/usr/share/elasticsearch/logs
+      - ./es/repo/:/mount/backups
     environment:
       - "node.name=es-node"
       #(Static) Specifies whether Elasticsearch should form a multiple-node cluster. Defaults to multi-node
@@ -44,6 +45,7 @@ services:
       - ./esB/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./esB/config/logging.yml:/usr/share/elasticsearch/config/logging.yml
       - ./esB/logs/:/usr/share/elasticsearch/logs
+      - ./es/repo/:/mount/backups
     environment:
       - "node.name=es-nodeB"
       #(Static) Specifies whether Elasticsearch should form a multiple-node cluster. Defaults to multi-node

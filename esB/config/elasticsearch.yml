@@ -36,6 +36,7 @@ node.name: Node0002
 # Path to log files:
 #
 path.logs: /usr/share/elasticsearch/logs
+path.repo: fileserver://10.29.0.23/mount/backups
 #
 # ----------------------------------- Memory -----------------------------------
 #
