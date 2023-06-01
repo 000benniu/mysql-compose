@@ -105,6 +105,7 @@ services:
       - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
       - ./lrA/liferay/files/data/license:/opt/liferay/data/license
       - ./lrA/liferay/osgi/configs:/opt/liferay/osgi/configs
+      - ./lrA/liferay/patching:/mnt/liferay/patching
     environment:
       - bootstrap.memory_lock=true
       - LCP_PROJECT_ENVIRONMENT=local
