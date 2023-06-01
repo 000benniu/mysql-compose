@@ -4,8 +4,8 @@ db/mysql_data
 es/data
 es/logs
 es/repo
-esB/data
 esB/logs
 .DS_Store
 lrA/liferay/files/data
 lrB/liferay/files/data
+lrCIDP/liferay/files/data

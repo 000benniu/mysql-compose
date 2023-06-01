@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   elasticsearch:
-    container_name: nssolc_elasticsearch
+    container_name: es_elasticsearch
     build: es
     ports:
       - "9200:9200"
@@ -17,7 +17,6 @@ services:
       - ./es/logs/:/usr/share/elasticsearch/logs
       - ./es/repo/:/mount/backups
     environment:
-      - "node.name=es-node"
       #(Static) Specifies whether Elasticsearch should form a multiple-node cluster. Defaults to multi-node
       #- "discovery.type=single-node"
       - "bootstrap.memory_lock=true"
@@ -30,41 +29,9 @@ services:
       - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
     networks:
       - test_esnet
-
-  elasticsearchb:
-    container_name: nssolc_elasticsearch_b
-    build: esB
-    ports:
-      - "9201:9200"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./esB/data/:/usr/share/elasticsearch/data/
-      - ./esB/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./esB/config/logging.yml:/usr/share/elasticsearch/config/logging.yml
-      - ./esB/logs/:/usr/share/elasticsearch/logs
-      - ./es/repo/:/mount/backups
-    environment:
-      - "node.name=es-nodeB"
-      #(Static) Specifies whether Elasticsearch should form a multiple-node cluster. Defaults to multi-node
-      #- "discovery.type=single-node"
-      - "bootstrap.memory_lock=true"
-      - xpack.security.enabled=false
-      - xpack.graph.enabled=false
-      - xpack.ml.enabled=false
-      - xpack.monitoring.enabled=true
-      - xpack.watcher.enabled=false
-      - http.cors.allow-origin=*
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-    networks:
-      - test_esnet
-    depends_on:
-      - elasticsearch
 
   mysql:
-    container_name: nssolc_mysql
+    container_name: mysql
     image: mysql:5.7
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
@@ -83,107 +50,126 @@ services:
       MYSQL_PASSWORD: password
     networks:
       - test_esnet
-    depends_on:
-      - elasticsearch
-      - elasticsearchb
 
-  liferay71A:
-    image: liferay/dxp:7.1.10-sp6
-    container_name: nssolc_liferay71A
-    mem_limit: 3g
-    ports:
-      - "8080:8080"
-      - "11311:11311"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./lrA/liferay/files:/mnt/liferay/files
-      - ./lrA/liferay/scripts:/mnt/liferay/scripts
-      - ./lrA/liferay/deploy:/mnt/liferay/deploy
-      - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
-      - ./lrA/liferay/files/data/license:/opt/liferay/data/license
-      - ./lrA/liferay/osgi/configs:/opt/liferay/osgi/configs
-      - ./lrA/liferay/patching:/mnt/liferay/patching
-    environment:
-      - bootstrap.memory_lock=true
-      - LCP_PROJECT_ENVIRONMENT=local
-      - LCP_PROJECT_ID=local
-      - LIFERAY_JPDA_ENABLED=true
-      - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.22.0.4/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
-      - LIFERAY_DISABLE_TRIAL_LICENSE=true
-      - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
-      - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
-      - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false
-      - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_CUSTOM_PERIOD_QUESTION_PERIOD_ENABLED=false
-    depends_on:
-      - mysql
-      - elasticsearch
-      - elasticsearchb
-    networks:
-      - test_esnet
-  
-  liferay71B:
-    image: liferay/dxp:7.1.10-sp6
-    container_name: nssolc_liferay71B
-    mem_limit: 3g
-    ports:
-      - "8081:8080"
-      - "11312:11311"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - ./lrB/liferay/files:/mnt/liferay/files
-      - ./lrB/liferay/scripts:/mnt/liferay/scripts
-      - ./lrB/liferay/deploy:/mnt/liferay/deploy
-      - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
-      - ./lrB/liferay/files/data/license:/opt/liferay/data/license
-      - ./lrB/liferay/osgi/configs:/opt/liferay/osgi/configs
-    environment:
-      - bootstrap.memory_lock=true
-      - LCP_PROJECT_ENVIRONMENT=local
-      - LCP_PROJECT_ID=local
-      - LIFERAY_JPDA_ENABLED=true
-      - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
-      - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.22.0.4/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
-      - LIFERAY_DISABLE_TRIAL_LICENSE=true
-      - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
-      - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
-      - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false
-      - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_CUSTOM_PERIOD_QUESTION_PERIOD_ENABLED=false
-    depends_on:
-      - mysql
-      - elasticsearch
-      - elasticsearchb
-    networks:
-      - test_esnet
-
-
-  # kibana:
-  #   container_name: nssolc_kibana
-  #   image: docker.elastic.co/kibana/kibana:7.9.3
-  #   depends_on:
-  #     - elasticsearch
+  # liferay72A:
+  #   image: liferay/dxp:7.2.10-sp8
+  #   container_name: lr_liferay72A
+  #   mem_limit: 3g
   #   ports:
-  #     - "5601:5601"
+  #     - "8080:8080"
+  #     - "11311:11311"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
   #   volumes:
-  #     - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+  #     - ./lrA/liferay/files:/mnt/liferay/files
+  #     - ./lrA/liferay/scripts:/mnt/liferay/scripts
+  #     - ./lrA/liferay/deploy:/mnt/liferay/deploy
+  #     - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
+  #     - ./lrA/liferay/files/data/license:/opt/liferay/data/license
+  #     - ./lrA/liferay/osgi/configs:/opt/liferay/osgi/configs
+  #     - ./lrA/liferay/patching:/mnt/liferay/patching
   #   environment:
-  #     - xpack.security.enabled=false
-  #     - "ELASTICSEARCH_HOSTS=http://elasticsearch:9200"
+  #     - bootstrap.memory_lock=true
+  #     - LCP_PROJECT_ENVIRONMENT=local
+  #     - LCP_PROJECT_ID=local
+  #     - LIFERAY_JPDA_ENABLED=true
+  #     - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.22.0.4/72ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
+  #     - LIFERAY_DISABLE_TRIAL_LICENSE=true
+  #     - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
+  #     - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_CUSTOM_PERIOD_QUESTION_PERIOD_ENABLED=false
+  #   depends_on:
+  #     - mysql
+  #     - elasticsearch
+  #   networks:
+  #     - test_esnet
+  
+  # liferay72B:
+  #   image: liferay/dxp:7.2.10-sp8
+  #   container_name: lr_liferay72B
+  #   mem_limit: 3g
+  #   ports:
+  #     - "8081:8080"
+  #     - "11312:11311"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - ./lrB/liferay/files:/mnt/liferay/files
+  #     - ./lrB/liferay/scripts:/mnt/liferay/scripts
+  #     - ./lrB/liferay/deploy:/mnt/liferay/deploy
+  #     - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
+  #     - ./lrB/liferay/files/data/license:/opt/liferay/data/license
+  #     - ./lrB/liferay/osgi/configs:/opt/liferay/osgi/configs
+  #   environment:
+  #     - bootstrap.memory_lock=true
+  #     - LCP_PROJECT_ENVIRONMENT=local
+  #     - LCP_PROJECT_ID=local
+  #     - LIFERAY_JPDA_ENABLED=true
+  #     - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.22.0.4/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
+  #     - LIFERAY_DISABLE_TRIAL_LICENSE=true
+  #     - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
+  #     - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_CUSTOM_PERIOD_QUESTION_PERIOD_ENABLED=false
+  #   depends_on:
+  #     - mysql
+  #     - elasticsearch
+  #     - elasticsearchb
+  #   networks:
+  #     - test_esnet
 
-
-
+  # liferay72C:
+  #   image: liferay/dxp:7.2.10-sp8
+  #   container_name: lr_liferay72C
+  #   mem_limit: 3g
+  #   ports:
+  #     - "8081:8080"
+  #     - "11312:11311"
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - ./lrC/liferay/files:/mnt/liferay/files
+  #     - ./lrC/liferay/scripts:/mnt/liferay/scripts
+  #     - ./lrC/liferay/deploy:/mnt/liferay/deploy
+  #     - ./lrA/liferay/files/data/document_library:/mnt/liferay/files/data/document_library
+  #     - ./lrC/liferay/files/data/license:/opt/liferay/data/license
+  #     - ./lrC/liferay/osgi/configs:/opt/liferay/osgi/configs
+  #   environment:
+  #     - bootstrap.memory_lock=true
+  #     - LCP_PROJECT_ENVIRONMENT=local
+  #     - LCP_PROJECT_ID=local
+  #     - LIFERAY_JPDA_ENABLED=true
+  #     - LIFERAY_MODULE_PERIOD_FRAMEWORK_PERIOD_PROPERTIES_PERIOD_OSGI_PERIOD_CONSOLE=0.0.0.0:11311
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_DRIVER_UPPERCASEC_LASS_UPPERCASEN_AME=com.mysql.cj.jdbc.Driver
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_USERNAME=root
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_PASSWORD=password
+  #     - LIFERAY_JDBC_PERIOD_DEFAULT_PERIOD_URL=jdbc:mysql://172.22.0.4/71ee?connectionCollation=utf8mb4_bin&dontTrackOpenResources=true&holdResultsOpenOverStatementClose=true&serverTimezone=GMT&useFastDateParsing=false&useUnicode=true&characterEncoding=utf8
+  #     - LIFERAY_DISABLE_TRIAL_LICENSE=true
+  #     - LIFERAY_SETUP_PERIOD_WIZARD_PERIOD_ENABLED=false
+  #     - LIFERAY_TERMS_PERIOD_OF_PERIOD_USE_PERIOD_REQUIRED="false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_ENABLED=false
+  #     - LIFERAY_USERS_PERIOD_REMINDER_PERIOD_QUERIES_PERIOD_CUSTOM_PERIOD_QUESTION_PERIOD_ENABLED=false
+  #   depends_on:
+  #     - mysql
+  #     - elasticsearch
+  #     - elasticsearchb
+  #   networks:
+  #     - test_esnet
 
 networks:
   test_esnet:
