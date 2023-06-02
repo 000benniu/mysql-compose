@@ -12,7 +12,7 @@ thread_pool.max_threads="20"
 thread_pool.keep_alive_time="30000"/>
 
 <TCPPING async_discovery="true"
-initial_hosts="${jgroups.tcpping.initial_hosts:localhost[7800],localhost[7801]}"
+initial_hosts="${jgroups.tcpping.initial_hosts:liferay72A[7800],liferay72B[7800]}"
 port_range="2"/>
 <MERGE3 min_interval="10000"
 max_interval="30000"/>
